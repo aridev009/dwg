@@ -1,40 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GitHub Pages DWG Viewer</title>
+<title>DWG Viewer - GitHub Pages</title>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.152/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dwg-viewer@1.2.0/dist/dwg-viewer.min.js"></script>
+<!-- ODA WebViewer -->
+<script src="https://webviewer.opendesign.com/oda.js"></script>
 
 <style>
 body{
     margin:0;
     font-family:Arial;
-    background:#eee;
+    background:#f0f0f0;
 }
 
 .header{
-    background:#222;
+    background:#1f1f1f;
     color:white;
     padding:10px;
     text-align:center;
 }
 
-#viewer{
-    width:100vw;
+#container{
+    display:flex;
     height:calc(100vh - 60px);
 }
 
-#uploadBox{
-    position:fixed;
-    top:70px;
-    left:10px;
+#sidebar{
+    width:280px;
     background:white;
     padding:10px;
-    border-radius:6px;
-    box-shadow:0 0 5px rgba(0,0,0,.3);
+    border-right:1px solid #ddd;
+}
+
+#viewerDiv{
+    flex:1;
+    width:100%;
+    height:100%;
+}
+
+button, input{
+    width:100%;
+    margin:6px 0;
+    padding:8px;
+}
+
+#status{
+    font-size:12px;
+    color:green;
 }
 </style>
 </head>
@@ -45,66 +58,66 @@ body{
 <h3>DWG Viewer (Works on GitHub Pages)</h3>
 </div>
 
-<div id="uploadBox">
-<input type="file" id="fileInput" accept=".dwg,.dxf">
-<p id="status">Upload a DWG file</p>
+<div id="container">
+
+<div id="sidebar">
+<b>Select DWG:</b>
+<input type="file" id="fileInput" accept=".dwg,.dxf"/>
+
+<button onclick="fitToScreen()">Fit to Screen</button>
+<button onclick="resetView()">Reset View</button>
+
+<hr>
+<div id="status">Initializing viewer...</div>
 </div>
 
-<div id="viewer"></div>
+<div id="viewerDiv"></div>
+
+</div>
 
 <script>
-let container = document.getElementById("viewer");
-let status = document.getElementById("status");
+let viewer = null;
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
+async function initViewer(){
+    viewer = await ODA.initialize({
+        container: "viewerDiv",
+        backgroundColor: [255,255,255,255],
+        // CRITICAL for GitHub Pages:
+        wasmPath: "https://webviewer.opendesign.com/wasm/"
+    });
 
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 10000);
-camera.position.set(0, 0, 500);
-
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight-60);
-container.appendChild(renderer.domElement);
-
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
+    document.getElementById("status").innerText =
+      "Viewer ready. Upload a DWG file.";
 }
-animate();
 
-window.addEventListener("resize", ()=>{
-    camera.aspect = window.innerWidth/(window.innerHeight-60);
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight-60);
-});
+initViewer();
 
 document.getElementById("fileInput").addEventListener("change", async (e)=>{
     const file = e.target.files[0];
     if(!file) return;
 
+    const status = document.getElementById("status");
     status.innerText = "Loading " + file.name + " ...";
 
-    const reader = new FileReader();
-
-    reader.onload = function(evt){
-        try{
-            const loader = new DWGLoader();
-            loader.parse(evt.target.result, (model)=>{
-                scene.add(model);
-                status.innerText = "Loaded: " + file.name;
-            });
-        }
-        catch(err){
-            status.innerText = "Load error: " + err.message;
-            console.error(err);
-        }
-    };
-
-    reader.readAsArrayBuffer(file);
+    try{
+        const buffer = await file.arrayBuffer();
+        await viewer.loadFromArrayBuffer(buffer, file.name);
+        status.innerText = "Loaded successfully: " + file.name;
+        viewer.fitToScreen();
+    }
+    catch(err){
+        status.innerText = "ERROR: " + err.message;
+        console.error(err);
+    }
 });
+
+function fitToScreen(){
+    if(viewer) viewer.fitToScreen();
+}
+
+function resetView(){
+    if(viewer) viewer.resetView();
+}
 </script>
 
 </body>
