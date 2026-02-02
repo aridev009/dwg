@@ -1,53 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>DWG Viewer - GitHub Pages</title>
+<title>DWG Viewer (GitHub Pages)</title>
 
-<!-- ODA WebViewer -->
-<script src="https://webviewer.opendesign.com/oda.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@webcad/dxf-viewer@1.2.0/dist/dxf-viewer.min.js"></script>
 
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:#f0f0f0;
+  margin:0;
+  font-family:Arial;
+  background:#eee;
 }
 
 .header{
-    background:#1f1f1f;
-    color:white;
-    padding:10px;
-    text-align:center;
+  background:#222;
+  color:white;
+  padding:10px;
+  text-align:center;
 }
 
-#container{
-    display:flex;
-    height:calc(100vh - 60px);
+#controls{
+  position:fixed;
+  top:70px;
+  left:10px;
+  background:white;
+  padding:10px;
+  border-radius:6px;
+  box-shadow:0 0 5px rgba(0,0,0,.3);
 }
 
-#sidebar{
-    width:280px;
-    background:white;
-    padding:10px;
-    border-right:1px solid #ddd;
-}
-
-#viewerDiv{
-    flex:1;
-    width:100%;
-    height:100%;
-}
-
-button, input{
-    width:100%;
-    margin:6px 0;
-    padding:8px;
-}
-
-#status{
-    font-size:12px;
-    color:green;
+#viewer{
+  width:100vw;
+  height:calc(100vh - 60px);
 }
 </style>
 </head>
@@ -58,84 +43,41 @@ button, input{
 <h3>DWG Viewer (Works on GitHub Pages)</h3>
 </div>
 
-<div id="container">
-
-<div id="sidebar">
-<b>Select DWG:</b>
-<input type="file" id="fileInput" accept=".dwg,.dxf"/>
-
-<button onclick="fitToScreen()">Fit to Screen</button>
-<button onclick="resetView()">Reset View</button>
-
-<hr>
-<div id="status">Initializing viewer...</div>
+<div id="controls">
+<b>Select DWG:</b><br>
+<input type="file" id="fileInput" accept=".dwg,.dxf">
+<p id="status">Upload a DWG file</p>
 </div>
 
-<div id="viewerDiv"></div>
-
-</div>
+<div id="viewer"></div>
 
 <script>
-let viewer = null;
-let viewerReady = false;
+const viewer = new DxfViewer(document.getElementById("viewer"));
 
-async function initViewer(){
-    const status = document.getElementById("status");
-    status.innerText = "Initializing viewer...";
+document.getElementById("fileInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  const status = document.getElementById("status");
 
-    try {
-        viewer = await ODA.initialize({
-            container: "viewerDiv",
-            backgroundColor: [255,255,255,255],
-            wasmPath: "https://webviewer.opendesign.com/wasm/"
-        });
+  if(!file) return;
 
-        viewerReady = true;
-        status.innerText = "Viewer ready. Upload a DWG file.";
+  status.innerText = "Loading " + file.name + " ...";
 
-    } catch (err) {
-        status.innerText = "Viewer FAILED to start: " + err.message;
-        console.error("Viewer init error:", err);
-    }
-}
+  const reader = new FileReader();
 
-initViewer();
-
-document.getElementById("fileInput").addEventListener("change", async (e)=>{
-    const file = e.target.files[0];
-    const status = document.getElementById("status");
-
-    if(!file) return;
-
-    if (!viewerReady || !viewer) {
-        status.innerText =
-          "Viewer not ready yet — please wait 5 seconds and try again.";
-        return;
-    }
-
-    status.innerText = "Loading " + file.name + " ...";
-
+  reader.onload = function(evt){
     try{
-        const buffer = await file.arrayBuffer();
-        await viewer.loadFromArrayBuffer(buffer, file.name);
-        status.innerText = "Loaded successfully: " + file.name;
-        viewer.fitToScreen();
+      viewer.load(evt.target.result);
+      status.innerText = "Loaded: " + file.name;
     }
     catch(err){
-        status.innerText = "ERROR loading DWG: " + err.message;
-        console.error("DWG Load Error:", err);
+      status.innerText = "Error: " + err.message;
+      console.error(err);
     }
+  };
+
+  reader.readAsArrayBuffer(file);
 });
-
-function fitToScreen(){
-    if(viewer) viewer.fitToScreen();
-}
-
-function resetView(){
-    if(viewer) viewer.resetView();
-}
 </script>
 
 </body>
 </html>
-
