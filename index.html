@@ -77,26 +77,42 @@ button, input{
 
 <script>
 let viewer = null;
+let viewerReady = false;
 
 async function initViewer(){
-    viewer = await ODA.initialize({
-        container: "viewerDiv",
-        backgroundColor: [255,255,255,255],
-        // CRITICAL for GitHub Pages:
-        wasmPath: "https://webviewer.opendesign.com/wasm/"
-    });
+    const status = document.getElementById("status");
+    status.innerText = "Initializing viewer...";
 
-    document.getElementById("status").innerText =
-      "Viewer ready. Upload a DWG file.";
+    try {
+        viewer = await ODA.initialize({
+            container: "viewerDiv",
+            backgroundColor: [255,255,255,255],
+            wasmPath: "https://webviewer.opendesign.com/wasm/"
+        });
+
+        viewerReady = true;
+        status.innerText = "Viewer ready. Upload a DWG file.";
+
+    } catch (err) {
+        status.innerText = "Viewer FAILED to start: " + err.message;
+        console.error("Viewer init error:", err);
+    }
 }
 
 initViewer();
 
 document.getElementById("fileInput").addEventListener("change", async (e)=>{
     const file = e.target.files[0];
+    const status = document.getElementById("status");
+
     if(!file) return;
 
-    const status = document.getElementById("status");
+    if (!viewerReady || !viewer) {
+        status.innerText =
+          "Viewer not ready yet — please wait 5 seconds and try again.";
+        return;
+    }
+
     status.innerText = "Loading " + file.name + " ...";
 
     try{
@@ -106,8 +122,8 @@ document.getElementById("fileInput").addEventListener("change", async (e)=>{
         viewer.fitToScreen();
     }
     catch(err){
-        status.innerText = "ERROR: " + err.message;
-        console.error(err);
+        status.innerText = "ERROR loading DWG: " + err.message;
+        console.error("DWG Load Error:", err);
     }
 });
 
@@ -122,3 +138,4 @@ function resetView(){
 
 </body>
 </html>
+
