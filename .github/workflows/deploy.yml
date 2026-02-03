@@ -28,10 +28,12 @@ jobs:
           node-version: 18
 
       # 🔥 IMPORTANT FIX HERE 🔥
-      - name: Install dependencies (fixed)
+      - name: Install dependencies (REAL FIX)
         run: |
           cd viewer
+          npm config set workspaces false
           npm install --legacy-peer-deps
+
 
       - name: Build for GitHub Pages
         run: |
