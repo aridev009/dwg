@@ -1,60 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DWG Viewer - GitHub Pages</title>
+<title>DWG Viewer - GitHub Pages</title>
 
-    <!-- Load CAD Viewer library -->
-    <script src="https://unpkg.com/@webcad/cad-viewer/dist/cad-viewer.js"></script>
+<!-- CAD Viewer -->
+<script src="https://unpkg.com/@webcad/cad-viewer/dist/cad-viewer.js"></script>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-            text-align: center;
-        }
+<style>
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+    text-align:center;
+}
 
-        h2 {
-            margin-top: 20px;
-        }
-
-        #viewer-container {
-            width: 90%;
-            height: 80vh;
-            margin: 20px auto;
-            border: 2px solid #333;
-            background: white;
-        }
-
-        #upload {
-            margin: 20px;
-        }
-    </style>
+#viewer{
+    width: 95%;
+    height: 85vh;
+    margin: auto;
+    border: 2px solid black;
+    background: white;
+}
+</style>
 </head>
 
 <body>
 
-<h2>DWG Viewer (GitHub Pages)</h2>
+<h2>DWG Viewer (Upload & View)</h2>
 
-<input type="file" id="upload" accept=".dwg">
+<input type="file" id="fileInput" accept=".dwg">
 
-<div id="viewer-container"></div>
+<div id="viewer"></div>
 
 <script>
-    const viewer = new CADViewer("viewer-container");
+const viewer = new CADViewer("viewer", {
+    workerPath: "https://unpkg.com/@webcad/cad-viewer/dist/"
+});
 
-    document.getElementById("upload").addEventListener("change", function(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+document.getElementById("fileInput").addEventListener("change", function(e){
+    const file = e.target.files[0];
+    if(!file) return;
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const arrayBuffer = e.target.result;
-            viewer.load(arrayBuffer);
-        };
-        reader.readAsArrayBuffer(file);
-    });
+    const reader = new FileReader();
+
+    reader.onload = function(ev){
+        const buffer = ev.target.result;
+        viewer.load(buffer);
+    };
+
+    reader.readAsArrayBuffer(file);
+});
 </script>
 
 </body>
