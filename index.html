@@ -1,82 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>DWG Viewer (GitHub Pages)</title>
+    <title>DWG Viewer - GitHub Pages</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@webcad/dxf-viewer@1.2.0/dist/dxf-viewer.min.js"></script>
+    <!-- Load CAD Viewer library -->
+    <script src="https://unpkg.com/@webcad/cad-viewer/dist/cad-viewer.js"></script>
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#eee;
-}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            text-align: center;
+        }
 
-.header{
-  background:#222;
-  color:white;
-  padding:10px;
-  text-align:center;
-}
+        h2 {
+            margin-top: 20px;
+        }
 
-#controls{
-  position:fixed;
-  top:70px;
-  left:10px;
-  background:white;
-  padding:10px;
-  border-radius:6px;
-  box-shadow:0 0 5px rgba(0,0,0,.3);
-}
+        #viewer-container {
+            width: 90%;
+            height: 80vh;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background: white;
+        }
 
-#viewer{
-  width:100vw;
-  height:calc(100vh - 60px);
-}
-</style>
+        #upload {
+            margin: 20px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
-<h3>DWG Viewer (Works on GitHub Pages)</h3>
-</div>
+<h2>DWG Viewer (GitHub Pages)</h2>
 
-<div id="controls">
-<b>Select DWG:</b><br>
-<input type="file" id="fileInput" accept=".dwg,.dxf">
-<p id="status">Upload a DWG file</p>
-</div>
+<input type="file" id="upload" accept=".dwg">
 
-<div id="viewer"></div>
+<div id="viewer-container"></div>
 
 <script>
-const viewer = new DxfViewer(document.getElementById("viewer"));
+    const viewer = new CADViewer("viewer-container");
 
-document.getElementById("fileInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  const status = document.getElementById("status");
+    document.getElementById("upload").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-  if(!file) return;
-
-  status.innerText = "Loading " + file.name + " ...";
-
-  const reader = new FileReader();
-
-  reader.onload = function(evt){
-    try{
-      viewer.load(evt.target.result);
-      status.innerText = "Loaded: " + file.name;
-    }
-    catch(err){
-      status.innerText = "Error: " + err.message;
-      console.error(err);
-    }
-  };
-
-  reader.readAsArrayBuffer(file);
-});
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const arrayBuffer = e.target.result;
+            viewer.load(arrayBuffer);
+        };
+        reader.readAsArrayBuffer(file);
+    });
 </script>
 
 </body>
