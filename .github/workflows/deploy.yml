@@ -18,10 +18,9 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Download prebuilt cad-viewer
+      - name: Clone prebuilt CAD Viewer (WORKING METHOD)
         run: |
-          mkdir -p site
-          npx degit mlightcad/cad-viewer#gh-pages site
+          git clone -b gh-pages https://github.com/mlightcad/cad-viewer.git site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
