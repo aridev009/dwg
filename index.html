@@ -1,54 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>DWG Viewer - GitHub Pages</title>
-
-<!-- CAD Viewer -->
-<script src="https://unpkg.com/@webcad/cad-viewer/dist/cad-viewer.js"></script>
+<meta charset="UTF-8">
+<title>DWG Viewer | GitHub Pages</title>
 
 <style>
 body{
-    font-family: Arial;
-    background:#f4f4f4;
-    text-align:center;
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f4f4;
 }
 
-#viewer{
-    width: 95%;
-    height: 85vh;
-    margin: auto;
-    border: 2px solid black;
-    background: white;
+.header{
+  background:#1f2937;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:22px;
+}
+
+.container{
+  padding:15px;
+  text-align:center;
+}
+
+.upload-box{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  box-shadow:0 0 5px rgba(0,0,0,.1);
+  display:inline-block;
+}
+
+iframe{
+  width:100%;
+  height:80vh;
+  border:none;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>DWG Viewer (Upload & View)</h2>
+<div class="header">
+  DWG Viewer (GitHub Pages)
+</div>
 
-<input type="file" id="fileInput" accept=".dwg">
+<div class="container">
 
-<div id="viewer"></div>
+  <div class="upload-box">
+    <h3>Upload your DWG file</h3>
+    <input type="file" id="dwgFile" accept=".dwg">
+    <br><br>
+    <button onclick="openViewer()">Open in Viewer</button>
+  </div>
+
+  <iframe id="viewerFrame"></iframe>
+
+</div>
 
 <script>
-const viewer = new CADViewer("viewer", {
-    workerPath: "https://unpkg.com/@webcad/cad-viewer/dist/"
-});
+function openViewer(){
+  const fileInput = document.getElementById("dwgFile");
 
-document.getElementById("fileInput").addEventListener("change", function(e){
-    const file = e.target.files[0];
-    if(!file) return;
+  if(!fileInput.files.length){
+    alert("Please select a DWG file first.");
+    return;
+  }
 
-    const reader = new FileReader();
-
-    reader.onload = function(ev){
-        const buffer = ev.target.result;
-        viewer.load(buffer);
-    };
-
-    reader.readAsArrayBuffer(file);
-});
+  // Open official CAD viewer inside your page
+  document.getElementById("viewerFrame").src =
+  "https://mlightcad.github.io/cad-viewer/cad-viewer/";
+}
 </script>
 
 </body>
