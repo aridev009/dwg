@@ -1,70 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8"/>
-<title>DWG Viewer (Iframe Version)</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background:#f4f4f4;
-}
-
-.header {
-  padding: 15px;
-  background:#1e1e1e;
-  color:white;
-  text-align:center;
-}
-
-.container {
-  padding: 10px;
-}
-
-.upload-box {
-  padding: 15px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 0 5px rgba(0,0,0,.1);
-  margin-bottom:10px;
-  text-align:center;
-}
-
-iframe {
-  width: 100%;
-  height: 80vh;
-  border: 1px solid #ccc;
-  background:white;
-}
-</style>
+  <title>DWG Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: white;
+      text-align: center;
+    }
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+      background: white;
+    }
+    .header {
+      padding: 10px;
+      background: #111;
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="header">
-  <h2>DWG Viewer (Iframe Version)</h2>
+  <h2>Online DWG Viewer (With Colors)</h2>
+  <p>Upload your DWG inside the viewer below</p>
 </div>
-
-<div class="container">
-
-<div class="upload-box">
-  <b>Step 1:</b> Select your DWG file here  
-  <br><br>
-  <input type="file" id="dummyInput" accept=".dwg"/>
-  <p style="color:gray;font-size:12px">
-    (This is only for your reference — actual upload happens inside viewer below)
-  </p>
-</div>
-
-<b>Step 2:</b> Upload your DWG inside the viewer below:
 
 <iframe 
-src="https://mlightcad.github.io/cad-viewer/cad-viewer/"
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-></iframe>
-
-</div>
+src="https://mlightcad.github.io/cad-viewer/cad-viewer/?monochrome=false&background=white">
+</iframe>
 
 </body>
 </html>
