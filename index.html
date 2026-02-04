@@ -2,10 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>DWG Viewer (No Iframe)</title>
-
-<!-- CAD Viewer library (official) -->
-<script src="https://cdn.jsdelivr.net/npm/@mlightcad/cad-viewer@latest/dist/cad-viewer.js"></script>
+<title>DWG Viewer (Iframe Version)</title>
 
 <style>
 body {
@@ -31,9 +28,10 @@ body {
   border-radius:8px;
   box-shadow:0 0 5px rgba(0,0,0,.1);
   margin-bottom:10px;
+  text-align:center;
 }
 
-#viewer {
+iframe {
   width: 100%;
   height: 80vh;
   border: 1px solid #ccc;
@@ -45,36 +43,28 @@ body {
 <body>
 
 <div class="header">
-  <h2>DWG Viewer (No Iframe)</h2>
+  <h2>DWG Viewer by Aritra</h2>
 </div>
 
 <div class="container">
 
 <div class="upload-box">
-  <b>Select DWG file:</b>
-  <input type="file" id="dwgInput" accept=".dwg"/>
+  <b>Step 1:</b> Select your DWG file here  
+  <br><br>
+  <input type="file" id="dummyInput" accept=".dwg"/>
+  <p style="color:gray;font-size:12px">
+    (This is only for your reference — actual upload happens inside viewer below)
+  </p>
 </div>
 
-<!-- This is the REAL viewer inside your page -->
-<cad-viewer id="viewer"></cad-viewer>
+<b>Step 2:</b> Upload your DWG inside the viewer below:
+
+<iframe 
+src="https://mlightcad.github.io/cad-viewer/cad-viewer/"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+></iframe>
 
 </div>
-
-<script>
-const input = document.getElementById("dwgInput");
-const viewer = document.getElementById("viewer");
-
-input.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  // Convert to blob URL so viewer can read it
-  const url = URL.createObjectURL(file);
-
-  // Load DWG into viewer
-  viewer.src = url;
-});
-</script>
 
 </body>
 </html>
