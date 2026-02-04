@@ -1,4 +1,4 @@
-name: Build and Deploy CAD Viewer to GitHub Pages
+name: Deploy CAD Viewer to GitHub Pages
 
 on:
   push:
@@ -11,44 +11,22 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Clone official cad-viewer repo
+      - name: Download prebuilt cad-viewer
         run: |
-          git clone https://github.com/mlightcad/cad-viewer.git viewer
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      # 🔥 IMPORTANT FIX HERE 🔥
-      - name: Install dependencies (REAL FIX)
-        run: |
-          cd viewer
-          npm config set workspaces false
-          npm install --legacy-peer-deps
-
-
-      - name: Build for GitHub Pages
-        run: |
-          cd viewer
-          npm run build
-
-      - name: Prepare files for GitHub Pages
-        run: |
-          mkdir -p gh-pages
-          cp -r viewer/dist/* gh-pages/
+          mkdir -p site
+          npx degit mlightcad/cad-viewer#gh-pages site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: gh-pages
+          path: site
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
