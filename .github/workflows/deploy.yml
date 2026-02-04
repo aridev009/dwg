@@ -18,14 +18,13 @@ jobs:
       - name: Checkout your repo
         uses: actions/checkout@v4
 
-      - name: Clone prebuilt CAD Viewer (WORKING METHOD)
-        run: |
-          git clone -b gh-pages https://github.com/mlightcad/cad-viewer.git site
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
 
-      - name: Upload Pages artifact
+      - name: Upload your site to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: ./
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
